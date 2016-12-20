@@ -6,28 +6,69 @@
  * Date: 12/20/2016
  * Time: 11:24 AM
  */
+require_once "Common/tplFunc.php";
 
 class MainController
 {
     public $_viewName='index';      //需要显示的模板名称
-    public $_varList=array();
+    public $_varList=array();       //初始化变量组，会传递给前端模板
+    public $isFileCache=FILE_CACHE;
+    public $cache_time=0;           //memcache缓存时间，0代表没有缓存
+    /**
+     * @param $viewName     显示的模板名称
+     */
     function setViewName($viewName){
         $this->_viewName=$viewName;
     }
+
+    /**
+     * @param $name
+     * @param $value
+     * 添加一个变量到前端模板中
+     */
     function addVar($name,$value){
         $this->_varList[$name]=$value;
     }
 
+    /**
+     * 运行所有事宜
+     */
     function run(){
+        if($this->cache_time>0)
+        {
+            if($getVars=get_cache($this->_viewName))
+            {
+                echo '使用了memcache缓存';
+                extract($getVars);
+            }else{
+                set_cache($this->_viewName,$this->_varList,$this->cache_time);
+                extract($this->_varList);
+            }
+        }else{
+            extract($this->_varList);
+        }
         ob_start();
         include('MVC/V/'.VIEW_PATH.'header.tpl');
         include('MVC/V/'.VIEW_PATH.'/'.$this->_viewName.'.tpl');
         include('MVC/V/'.VIEW_PATH.'footer.tpl');
         $get_contents=ob_get_contents();
         ob_clean();
-        $this->generateTpl($get_contents);
+        if($this->isFileCache)
+        {
+            $file_name=md5($_SERVER['REQUEST_URI']);
+            if(file_exists(CACHE_PATH.$file_name))
+            {
+                //这里还需要一个判断，如果类或者view页面做了更改就更新缓存内容
+                echo 'use file cache';
+                echo file_get_contents(CACHE_PATH.$file_name);
+            }else{
+                $cacheContent=$this->generateTpl($get_contents);
+                file_put_contents(CACHE_PATH.$file_name,$get_contents);
+                echo $cacheContent;
+            }
+        }
+        echo $this->generateTpl($get_contents);
     }
-
 
     function generateTpl($content)
     {
@@ -90,15 +131,33 @@ class MainController
      */
     function genForeachVars($content,$varName,$var)
     {
-        $pattern="/\{".$varName."\.(?<varValue>[a-zA-Z]{1,30})\}/";
-        if(preg_match_all($pattern,$content,$result))
+        if(preg_match_all("/{(.*?)}/is",$content,$result))
         {
-            $varValue=$result['varValue'];      //varValue即为user.username中的username,是个数组,保存所有变量
-            foreach($varValue as $item)
+            $result=$result[1];
+            foreach($result as $r)      //取出了出每次循环时，{}里面的内容
             {
-                if(isset($var[$item]))
+                $pattern="/".$varName."\.(?<varValue>[a-zA-Z]{1,30})/";
+                if(preg_match($pattern,$r,$result))
                 {
-                    $content=preg_replace("/\{".$varName."\.".$item."\}/",$var[$item],$content);
+//                    var_dump($result['varValue']);
+                    $varValue=$result['varValue'];
+                    if($r==$varName.'.'.$varValue)
+                    {
+                        //说明外面没套别的东西 没有函数
+                        if(isset($var[$varValue]))
+                        {
+                            $content=preg_replace("/\{".$varName."\.".$varValue."\}/",$var[$varValue],$content);
+                        }
+                    }
+                    else
+                    {
+                        if(isset($var[$varValue]))
+                        {
+                            $temp=preg_replace("/".$varName."\.".$varValue."/",$var[$varValue],$r);
+                            eval('$temp='.$temp.';');
+                            $content=str_replace('{'.$r.'}',$temp,$content);
+                        }
+                    }
                 }
             }
             return $content;

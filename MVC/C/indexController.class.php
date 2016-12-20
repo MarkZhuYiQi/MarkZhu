@@ -10,7 +10,6 @@ class indexController extends MainController
 {
     function index()
     {
-//        echo 'index';
         $users=[
             ['username'=>'mark','userPass'=>'7777777y'],
             ['username'=>'zhu','userPass'=>'31415926red'],

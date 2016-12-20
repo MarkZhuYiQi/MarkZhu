@@ -7,6 +7,7 @@
  * port:8787
  */
 require 'Common/config.php';
+require 'Common/functions.php';
 require('MVC/C/MainController.class.php');
 
 $get_control=isset($_GET['controller'])?trim($_GET['controller']):'index';

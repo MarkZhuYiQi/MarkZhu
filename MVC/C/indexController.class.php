@@ -16,5 +16,7 @@ class indexController extends MainController
             ['username'=>'red','userPass'=>'31415926zyq'],
         ];
         $this->addVar('users',$users);
+        $this->addVar('testVars','this is test vars');
+        $this->addVar('content','this is content var');
     }
 }

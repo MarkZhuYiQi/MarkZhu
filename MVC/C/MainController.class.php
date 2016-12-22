@@ -74,6 +74,7 @@ class MainController
     {
         $content=$this->genInclude($content);
         $content=$this->genForeach($content);
+        $content=$this->genSimpleVars($content);
         echo $content;
     }
     function genInclude($content)
@@ -91,6 +92,54 @@ class MainController
                         $content=preg_replace("/\{include\s+[\w\.]{3,50}\}/",$temp,$content);
                     }
                 }
+            }
+        }
+        return $content;
+    }
+
+    /**
+     * @param $content
+     *
+     * {blue('testVars')} {content}
+     */
+    function genSimpleVars($content)
+    {
+        //varObject0匹配整个函数/变量，varObject1匹配函数名，varObject2匹配变量名
+        //如果0，1有，2没有，说明是带变量函数；如果0,1没有，2有，说明是一个变量
+        if(preg_match_all("/\{(?<varObject0>[^\{]*?\(\'(?<varObject1>[\w\.]{1,30})\'\))\}|{(?<varObject2>[\w\.]{1,30}?)}/is",$content,$result))
+        {
+            $varObject0=$result['varObject0'];
+            $varObject1=$result['varObject1'];
+            $varObject2=$result['varObject2'];
+//            var_dump($result);
+            foreach($result[0] as $r)
+            {
+                $var0=current($varObject0);
+                $var1=current($varObject1);
+                $var2=current($varObject2);
+                if($var0 && $var1 && !$var2)    //说明是带变量函数
+                {
+                    if(array_key_exists($var1,$this->_varList))
+                    {
+                        $replaceR=str_replace($var1,$this->_varList[$var1],$r);
+                        $replaceR=str_replace(array('{','}'),'',$replaceR);
+                        eval('$last='.$replaceR.';');
+                        if($last)
+                        {
+                            $content=str_replace($r,$last,$content);
+                        }
+                    }
+                }
+                else    //说明就是个变量
+                {
+                    if(array_key_exists($var2,$this->_varList))
+                    {
+                        $content=str_replace('{'.$var2.'}',$this->_varList[$var2],$content);
+                    }
+                }
+                $var0=next($varObject0);
+                $var1=next($varObject1);
+                $var2=next($varObject2);
             }
         }
         return $content;

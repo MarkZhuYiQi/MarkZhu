@@ -1,0 +1,134 @@
+#myCar{
+    margin-top:50px;
+}
+.carousel-inner img{
+    margin:0 auto;
+}
+.carousel .item{
+    background:#222;
+}
+.carousel .itemTitle{
+    color:#fff;
+}
+
+.alert{
+    margin:4% 0 2% 0;
+}
+.newsList{
+    display:block;
+    margin:4% 0 0 0;
+    border:1px solid transparent;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+    background:#fafafa;
+    -webkit-box-shadow: 2px 2px 3px #ccc;
+    -moz-box-shadow: 2px 2px 3px #ccc;
+    box-shadow: 2px 2px 3px #ccc;
+    padding:0 5% 2% 5%;
+    position:relative;
+}
+.newsList .newsImg{
+    max-width:100%;
+    margin-bottom:1%;
+}
+.newsList .newsTitle{
+    font-size:30px;
+    padding-top:2%;
+    padding-bottom:2%;
+}
+.newsList .newsSummary{
+    display:block;
+    background: lightgoldenrodyellow;
+    padding:10px 15px;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+    line-height:1.5;
+    margin:10px auto;
+}
+.newsList .lgroup{
+    margin-bottom:2%;
+}
+.newsList .lgroup .label{
+    font-size:13px;
+    margin:0 5px;
+}
+.newsList .lgroup .btn{
+    -webkit-border-radius:15px;
+    -moz-border-radius:15px;
+    border-radius:15px;
+    outline:none;
+}
+.newsList .read{
+    display:block;
+    margin-left:87%;
+
+}
+.newsList .date{
+    color:#fff;
+    background:#D25951;
+    height:60px;
+    width:60px;
+    -webkit-border-radius:40px;
+    -moz-border-radius:40px;
+    border-radius:40px;
+    position:absolute;
+    top: -3%;;
+    left:-3%;
+}
+.newsList .date .month{
+    display:block;
+    font-size:12px;
+    padding-top:7%;
+}
+.newsList .date .day{
+    margin-top:-5%;
+    display:block;
+    font-weight:bold;
+    font-size:30px;
+}
+.newsList .bookmark{
+
+}
+.newsList .bookmark img{
+    width: 6%;
+    height:auto;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+    position:absolute;
+    left:93%;
+    top:-1%;
+}
+.newsList .mark{
+    margin:160% 15% 0 15%;
+    width:72%;
+    height:36.5%;
+    background:blue
+}
+
+.page{
+
+}
+.pagination{
+    box-shadow:2px 2px 3px #ccc;
+    margin-bottom:4%;
+}
+
+@media (min-width:992px) and (max-width:1199px){
+
+}
+@media (min-width:768px) and (max-width:991px){
+
+}
+@media (min-width:480px) and (max-width:767px){
+    .nav{
+        float:left;
+    }
+}
+@media (max-width:479px){
+    .nav{
+        float:left;
+    }
+}
